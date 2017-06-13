@@ -1,28 +1,33 @@
 service: "serverless-graphql-blog"
-provider: "aws"
 plugins:
-  - serverless-optimizer-plugin
+  - serverless-webpack
+provider:
+  name: "aws"
+  stage: "dev"
+  environment:
+    FAUNADB_SECRET: SERVER_SECRET_FOR_YOUR_FAUNADB_DATABASE
+
 functions:
   sadiavas:
     handler: "index.graphql"
     include:
       - blog/
       - index.js
-    events: 
+    events:
       - http:
           path: "blog/graphql"
           method: "POST"
 
-    custom: 
+    custom:
       excludePatterns: []
-      optimize: 
-        exclude: 
+      optimize:
+        exclude:
           - "aws-sdk"
-        transforms: 
-          - 
+        transforms:
+          -
             name: "babelify"
-            opts: 
-              presets: 
+            opts:
+              presets:
                 - "es2015"
 
 defaults:
@@ -32,53 +37,52 @@ defaults:
   timeout: 6
 
 resources:
-  Resources: 
-    PostsDynamo: 
+  Resources:
+    PostsDynamo:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: "Retain"
-      Properties: 
-        AttributeDefinitions: 
-          - 
+      Properties:
+        AttributeDefinitions:
+          -
             AttributeName: "id"
             AttributeType: "S"
-        KeySchema: 
-          - 
+        KeySchema:
+          -
             AttributeName: "id"
             KeyType: "HASH"
-        ProvisionedThroughput: 
+        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: "${service}-posts-${stage}"
-    AuthorsDynamo: 
+        TableName: "${self:service}-posts-${self:provider.stage}"
+    AuthorsDynamo:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: "Retain"
-      Properties: 
-        AttributeDefinitions: 
-          - 
+      Properties:
+        AttributeDefinitions:
+          -
             AttributeName: "id"
             AttributeType: "S"
-        KeySchema: 
-          - 
+        KeySchema:
+          -
             AttributeName: "id"
             KeyType: "HASH"
-        ProvisionedThroughput: 
+        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: "${service}-authors-${stage}"
-    CommentsDynamo: 
+        TableName: "${self:service}-authors-${self:provider.stage}"
+    CommentsDynamo:
       Type: "AWS::DynamoDB::Table"
       DeletionPolicy: "Retain"
-      Properties: 
-        AttributeDefinitions: 
-          - 
+      Properties:
+        AttributeDefinitions:
+          -
             AttributeName: "id"
             AttributeType: "S"
-        KeySchema: 
-          - 
+        KeySchema:
+          -
             AttributeName: "id"
             KeyType: "HASH"
-        ProvisionedThroughput: 
+        ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-        TableName: "${service}-comments-${stage}"
-
+        TableName: "${self:service}-comments-${self:provider.stage}"

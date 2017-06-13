@@ -10,8 +10,9 @@
     "url": "https://github.com/serverless/serverless-graphql-blog"
   },
   "dependencies": {
+    "babel-loader": "^7.0.0",
+    "babel-preset-es2015": "^6.24.1",
     "babelify": "^7.2.0",
-    "babel-preset-es2015": "^6.3.13",
-    "serverless-optimizer-plugin": "^2.5.1"
+    "serverless-webpack": "^1.0.0-rc.4"
   }
 }
