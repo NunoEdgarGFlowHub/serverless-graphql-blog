@@ -10,9 +10,9 @@ export function runGraphQL(event, cb) {
   if (event.query && event.query.hasOwnProperty('query')) {
     query = event.query.query.replace("\n", ' ', "g");
   }
-
+  console.log("query", query)
   graphql(Schema, query).then( function(result) {
-    //console.log('RESULT: ', result);
+    console.log('RESULT: ', result);
     return cb(null, result);
   });
 

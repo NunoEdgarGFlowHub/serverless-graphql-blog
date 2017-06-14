@@ -8,8 +8,24 @@ provider:
     FAUNADB_SECRET: SERVER_SECRET_FOR_YOUR_FAUNADB_DATABASE
 
 functions:
+  setupFaunaDB:
+    handler: index.setupFaunaDB
+    include:
+      - blog/
+      - index.js
+    custom:
+      excludePatterns: []
+      optimize:
+        exclude:
+          - "aws-sdk"
+        transforms:
+          -
+            name: "babelify"
+            opts:
+              presets:
+                - "es2015"
   sadiavas:
-    handler: "index.graphql"
+    handler: index.graphql
     include:
       - blog/
       - index.js

@@ -15,8 +15,14 @@ var lib = require('../lib');
 
 // Lambda Handler
 module.exports.handler = function(event, context) {
+  lib.runGraphQL(JSON.parse(event.body), function(error, result) {
 
-  lib.runGraphQL(event, function(error, response) {
-    return context.done(error, response);
+    const response = {
+      statusCode: 200,
+      body: JSON.stringify(result),
+    };
+
+    return context.succeed(response);
+    // return context.done(error, response);
   });
 };

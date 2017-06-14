@@ -10,7 +10,7 @@ import {
   GraphQLLimitedString
 } from 'graphql-custom-types';
 
-import { getPosts, getAuthor, getAuthors, getComments, createPost } from './dynamo';
+import { getPosts, getAuthor, getAuthors, getComments, createPost } from './faunadb';
 
 const Author = new GraphQLObjectType({
   name: "Author",

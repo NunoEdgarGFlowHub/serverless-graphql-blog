@@ -1,29 +1,31 @@
+import faunadb, {query as q} from 'faunadb';
+
 const faunaClient = new faunadb.Client({
   secret: process.env.FAUNADB_SECRET
 });
 
 export function setupFaunaDBSchema() {
-  faunaClient.query(
+  return faunaClient.query(
     q.Do(
       q.CreateClass({name: "posts"}),
       q.CreateClass({name: "authors"}),
       q.CreateClass({name: "comments"})
     )
-  .then(()=>{
-    return client.query(
+  ).then(()=>{
+    return faunaClient.query(
       q.Do(
         q.CreateIndex( {
           name: "all_posts",
           source: q.Class("posts")
-        })),
+        }),
         q.CreateIndex( {
           name: "all_authors",
           source: q.Class("authors")
-        })),
+        }),
         q.CreateIndex( {
           name: "all_comments",
           source: q.Class("comments")
-        }))
+        }),
         q.CreateIndex( {
           name: "author_by_id",
           source: q.Class("authors"),
@@ -31,8 +33,9 @@ export function setupFaunaDBSchema() {
           terms: [{
             field: ["data", "id"]
           }]
-        }))
+        })
       )
+    )
   })
 }
 
