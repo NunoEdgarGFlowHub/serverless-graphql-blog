@@ -6,52 +6,47 @@
 
 #serverless-graphql-blog
 
-This [Serverless Framework](http://www.serverless.com) Project creates a REST API for a basic blog structure, including Posts, Authors and Comments utilizing [GraphQL][1] and DynamoDB for persistent storage.  What's unique about this implementation is the entire REST API consists of only 1 endpoint.
+This [Serverless Framework](http://www.serverless.com) Project creates a REST API for a basic blog structure, including Posts, Authors and Comments utilizing [GraphQL][1] and FaunaDB for persistent storage.  The entire REST API consists of only 1 endpoint.
 
-Note: This project automatically creates 3 DynamoDB tables upon `serverless project install`.  They are defined in `s-project.json`.
-
-* [Blog Post](http://kevinold.com/2016/02/01/serverless-graphql.html)
-* [Video Walkthrough](https://www.youtube.com/watch?v=lgE5-mm8gX4)
-* [Email Updates](http://eepurl.com/bvz5Nj)
-* [Gitter Chat Room](https://gitter.im/serverless/serverless)
-* [Serverless Documentation](http://docs.serverless.com)
-* [Twitter](https://www.twitter.com/goserverless)
-
-Enjoy,<br/>
-Kevin Old ([Twitter](https://twitter.com/kevinold))
+This project is based on an early Serverless demo. you can read about the old version in this [blog post](http://kevinold.com/2016/02/01/serverless-graphql.html)
 
 ## Install & Deploy
 
-Make sure you have the most recent version of the [Serverless Framework](http://www.serverless.com) (0.5.x and higher) and you are using NodeV4 or greater.
+Make sure you have the most recent version of the [Serverless Framework](http://www.serverless.com) (1.0 and higher) and you are using NodeV4 or greater.
 
 ```
 npm install serverless -g
 ```
 
-Install this Serverless Project:
+Clone this repo:
 
 ```
-serverless project install serverless-graphql-blog
+git clone https://github.com/fauna/serverless-graphql-blog
+cd serverless-graphql-blog
 ```
 
-Install (top level) npm dependencies
+Install (top level) npm dependencies, and blog level dependencies.
 
 ```
 npm install
+cd blog/
+npm install
+cd ..
 ```
 
-View project summary:
+Sign up for FaunaDB for free, and configure database and a FaunaDB Server Secret for your application. Do this by visiting http://dashboard.fauna.com/ and creating a database, then browse back to its parent database and select Manage Keys > Create a Key. Then create a key with the `server` role and copy the key secret to your `serverless.yaml` file in place of `SERVER_SECRET_FOR_YOUR_FAUNADB_DATABASE`
+
+Now deploy your service.
 
 ```
-serverless dash summary
-```
-Deploy the project's Function and Endpoint:
-
-```
-serverless dash deploy
+serverless deploy
 ```
 
-[![Serverless GraphQL Blog Video Walkthrough](video_serverless_blog_graphql.png)](https://www.youtube.com/watch?v=lgE5-mm8gX4)
+Invoke the private endpoint for creating the classes and indexes in your FaunaDB database.
+
+```
+serverless invoke --function setupFaunaDB
+```
 
 ### Querying with GraphiQL
 
@@ -212,6 +207,14 @@ Returns:
   }
 }
 ```
+
+### TODOs and Contribution Opportunities
+
+* Currently there is no creation mechanism for comments or authors, so those have to be created via the FaunaDB Dashboard. Adding Mutations for the cases should be straightforward.
+
+* Currently there is no UI for the blog. Maybe there is an existing graphql powered blog frontend that this backend can be adapted to fit?
+
+* Predicate pushdown is missing, so the graphql layer is not taking advantage of all the query capabilities FaunaDB offers. GraphQL and the FaunaDB query language are similar enough that a full-featured FaunaDB graphql layer could potentially combine queries after the resolver has run.
 
 [1]: https://github.com/graphql/graphql-js
 [2]: https://github.com/graphql/graphiql
