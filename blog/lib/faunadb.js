@@ -41,7 +41,7 @@ export function setupFaunaDBSchema() {
 
 export function createPost(post) {
   return faunaClient.query(
-    q.Create(q.Class("posts"), {data : post})
+    q.Select("data", q.Create(q.Class("posts"), {data : post}))
   );
 }
 
