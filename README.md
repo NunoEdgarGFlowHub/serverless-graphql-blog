@@ -34,7 +34,7 @@ cd ..
 
 Sign up for FaunaDB for free, and configure database and a FaunaDB Server Secret for your application. Do this by visiting http://dashboard.fauna.com/ and creating a database, then browse back to its parent database and select Manage Keys > Create a Key. Then create a key with the `server` role and copy the key secret to your `serverless.yaml` file in place of `SERVER_SECRET_FOR_YOUR_FAUNADB_DATABASE`
 
-Now deploy your service.
+Now deploy your service, and make note of the POST endpoint URL it's assigned.
 
 ```
 serverless deploy
@@ -56,29 +56,52 @@ Usage with [GraphiQL.app][3] (an Electron wrapper around [GraphiQL][2]) is recom
 
 ### Sample GraphQL queries
 
-#### List of author names
+Before these queries will have anything to read, you'll want to create an author and some posts, at least. To create an author, visit the Author's class in the dashboard. The URL will look something like: `https://dashboard.fauna.com/db/my-graphql-blog/classes/authors`
+
+Click "Create Instance" and enter some data like:
+
+```json
+{
+  "name": "Chris",
+  "id": "123"
+}
 ```
-curl -XPOST -d '{"query": "{ authors { name } }"}' <endpoint>/dev/blog/graphql
+
+Now, you can switch to GraphiQL to run a mutation to create a blog post. Make sure and enter the endpoint URL that came back when you ran `serverless deploy`. Now you can enter a query like this to create a blog post for your author.
+
+```graphql
+mutation createNewPost {
+  post: createPost (id: "5",
+    title: "Fifth post!",
+    bodyContent: "Test content",
+    author: "123") { id, title } }
+```
+
+Now that you've created some data, you can run other queries.
+
+#### List of author names
+```graphql
+{ authors { name } }
 ```
 
 #### Results
-```
+```json
 {
   "data":{
     "authors":[
-      {"name":"Kevin"}
+      {"name":"Chris"}
     ]
   }
 }
 ```
 
 ### List of posts with id and title
-```
-curl -XPOST -d '{"query": "{ posts { id, title } }"}' <endpoint>/dev/blog/graphql
+```graphql
+{ posts { id, title } }
 ```
 
 #### Results
-```
+```json
 {
   "data": {
     "posts": [
@@ -91,19 +114,19 @@ curl -XPOST -d '{"query": "{ posts { id, title } }"}' <endpoint>/dev/blog/graphq
 ```
 
 #### List of posts with id, title and *nested* author name
-```
-curl -XPOST -d '{"query": "{ posts { id, title, author { name } } }"}' <endpoint>/dev/blog/graphql
+```graphql
+{ posts { id, title, author { name } } }
 ```
 
 #### Results
-```
+```json
 {
   "data": {
     "posts": [
       { "id":"1",
         "title":"First Post Title",
         "author":{
-          "name":"Kevin"
+          "name":"Chris"
         }
       }
     ]
@@ -112,12 +135,12 @@ curl -XPOST -d '{"query": "{ posts { id, title, author { name } } }"}' <endpoint
 ```
 
 #### List of posts with post, author and comments information (for a Post with no comments, i.e. comments:[])
-```
-curl -XPOST -d '{"query": "{ posts { id, title, author { id, name }, comments { id, content, author { name } } } }"}' <endpoint>/dev/blog/graphql
+```graphql
+{ posts { id, title, author { id, name }, comments { id, content, author { name } } } }
 ```
 
 #### Results
-```
+```json
 {
   "data":{
     "posts":[
@@ -138,13 +161,15 @@ curl -XPOST -d '{"query": "{ posts { id, title, author { id, name }, comments { 
 
 ### Sample GraphQL Mutations
 
+These have been expressed in curl, but you can use GraphiQL instead.
+
 #### Create Post
-```
+```sh
 curl -XPOST -d '{"query": "mutation createNewPost { post: createPost (id: \"5\", title: \"Fifth post!\", bodyContent: \"Test content\", author: \"1\") { id, title } }"}' <endpoint>/dev/blog/graphql
 ```
 
 #### Results
-```
+```json
 {
   "data":{
     "post":{
@@ -158,13 +183,14 @@ curl -XPOST -d '{"query": "mutation createNewPost { post: createPost (id: \"5\",
 
 #### Mutation Validation
 
-Validations defined using [graphql-custom-types][4] in [blog/lib/schema.js][5]
-```
+If your blog post title is too short it will fail. Validations are defined using [graphql-custom-types][4] in [blog/lib/schema.js][5]
+
+```sh
 curl -XPOST -d '{"query": "mutation createNewPost { post: createPost (id: \"8\", title: \"123456789\", bodyContent: \"Test content 5\") { id, title } }"}' <endpoint>/dev/blog/graphql
 ```
 
 #### Results
-```
+```json
 {
   "errors":[
   {
@@ -175,12 +201,12 @@ curl -XPOST -d '{"query": "mutation createNewPost { post: createPost (id: \"8\",
 
 
 ### Introspection Query
-```
+```sh
 curl -XPOST -d '{"query": "{__schema { queryType { name, fields { name, description} }}}"}' <endpoint>/dev/blog/graphql
 ```
 
 Returns:
-```
+```json
 {
   "data":{
     "__schema":{
