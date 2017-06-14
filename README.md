@@ -6,7 +6,7 @@
 
 This [Serverless Framework](http://www.serverless.com) Project creates a REST API for a basic blog structure, including Posts, Authors and Comments utilizing [GraphQL][1] and FaunaDB for persistent storage.  The entire REST API consists of only 1 endpoint.
 
-This project is based on an earlier Serverless demo. You can read about the old version in this [blog post](http://kevinold.com/2016/02/01/serverless-graphql.html).
+This project is based on an earlier Serverless demo. You can read about the original version in this [blog post](http://kevinold.com/2016/02/01/serverless-graphql.html).
 
 ## Install & Deploy
 
@@ -56,9 +56,9 @@ Usage with [GraphiQL.app][3] (an Electron wrapper around [GraphiQL][2]) is recom
 
 ### Sample GraphQL queries
 
-Before these queries will have anything to read, you'll want to create an author and some posts, at least. To create an author, visit the Author's class in the dashboard. The URL will look something like: `https://dashboard.fauna.com/db/my-graphql-blog/classes/authors`
+Before these queries will have anything to read, you'll want to create an author and some posts, at least. To create an author, visit the Author's class in the FaunaDB dashboard. The URL will look something like: `https://dashboard.fauna.com/db/my-graphql-blog/classes/authors`
 
-Click "Create Instance" and enter some data like:
+Click "Create Instance", enter some data like this, and save your author instance.
 
 ```json
 {
