@@ -5,6 +5,7 @@ const faunaClient = new faunadb.Client({
 });
 
 export function setupFaunaDBSchema() {
+  console.log("setupFaunaDBSchema");
   return faunaClient.query(
     q.Do(
       q.CreateClass({name: "posts"}),
@@ -36,7 +37,7 @@ export function setupFaunaDBSchema() {
         })
       )
     )
-  })
+  }).catch((e) => console.log(e));
 }
 
 export function createPost(post) {
